@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4693306685427264099}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.61, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1149644675510749026}
@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 8027353678049772930}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children:
   - {fileID: 8615889972724021351}
   m_Father: {fileID: 0}
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movSpeed: 2
   canon: {fileID: 8615889972724021351}
-  shotInterval: 3.5
+  shotInterval: 2.5
   laser: {fileID: 8805831863367389792, guid: 97f6ebba4fa36374ea81f253192b4ead, type: 3}
 --- !u!50 &1140628454763680923
 Rigidbody2D:

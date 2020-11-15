@@ -33,6 +33,7 @@ public class LaserBehaviour : MonoBehaviour
             pB.KilledEnemy();
             Destroy(col.gameObject);
             col.GetComponent<EnemyBehaviour>().Kill();
+            Destroy(transform.gameObject);
         }
 
         else if (col.gameObject.layer == LayerMask.NameToLayer("EnemyLaser")

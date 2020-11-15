@@ -4,16 +4,23 @@ using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour
 {
+    /*NORMAL MOVEMENT VARS
     [SerializeField] private float maxY;
     [SerializeField] private float minY;
 
     [SerializeField] private float constantMovSpeed;
     [SerializeField] private float incrementalMovSpeed;
-
     [SerializeField] private KeyCode incrementalUpButton;
     [SerializeField] private KeyCode incrementalDownButton;
+    */
+
+    [SerializeField] float[] ySnaps;
+
+    [SerializeField] private KeyCode upButton;
+    [SerializeField] private KeyCode downButton;
     [SerializeField] private KeyCode shootButton;
 
+    int currentYSnap = 0;
 
     private UIManager uM;
 
@@ -25,42 +32,55 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField] private GameObject laser;
 
+    public bool canShoot;
+
+    private IntroLevelManager iLM;
+    [SerializeField] private LevelManager lM;
+
     private void Start()
     {
         sR = GetComponent<SpriteRenderer>();
         uM = GameObject.Find("Canvas").GetComponent<UIManager>();
         canon = transform.GetChild(0);
+
+        iLM = GameObject.Find("IntroLevelManager").GetComponent<IntroLevelManager>();
+        if (uM.GetHandedness() == Handedness.Left) SwitchDirButtons();
     }
 
     private void Update()
     {
-        CheckConstantMove();
-        CheckIncrementalMove();
+        if (iLM.enabled) canShoot = false;
+        else canShoot = true;
+
+        UpdateMovement();
         ShootLaser();
     }
 
-    private void CheckConstantMove()
+    private void UpdateMovement()
     {
-        float wantedY = transform.position.y;
+        int newYSnap = currentYSnap;
 
-        wantedY += Input.GetAxisRaw("Vertical") * constantMovSpeed * Time.deltaTime;
+        if (Input.GetKeyDown(upButton))
+        {
+            if (currentYSnap + 1 <= ySnaps.Length - 1) newYSnap++;
+        }
 
-        if (maxY >= wantedY && wantedY >= minY) transform.position = new Vector2(transform.position.x, wantedY);
-    }
+        else if (Input.GetKeyDown(downButton))
+        {
+            if (currentYSnap - 1 >= 0) newYSnap--;
+        }
 
-    private void CheckIncrementalMove()
-    {
-        float wantedY = transform.position.y;
+        if (newYSnap != currentYSnap)
+        {
+            currentYSnap = newYSnap;
 
-        if (Input.GetKeyDown(incrementalUpButton)) wantedY += incrementalMovSpeed;
-        else if (Input.GetKeyDown(incrementalDownButton)) wantedY -= incrementalMovSpeed;
-
-        if (maxY >= wantedY && wantedY >= minY) transform.position = new Vector2(transform.position.x, wantedY);
+            transform.position = new Vector2(transform.position.x, ySnaps[currentYSnap]);
+        }
     }
 
     private void ShootLaser()
     {
-        if (Input.GetKeyDown(shootButton))
+        if (canShoot && Input.GetKeyDown(shootButton))
         {
             Instantiate(laser, canon.position, Quaternion.identity);
         }
@@ -84,5 +104,26 @@ public class PlayerBehaviour : MonoBehaviour
 
     public int GetScore() => score;
 
-    public void KilledEnemy() { score++; }
+    public void AddScore(int addition) => score += addition;
+
+    public void KilledEnemy() { score += 2; }
+
+    private void SwitchDirButtons()
+    {
+        KeyCode tempButton = upButton;
+
+        upButton = downButton;
+        downButton = tempButton;
+    }
+
+    private void ResetPlayer()
+    {
+        currentYSnap = 0;
+        transform.position = new Vector2(transform.position.x, ySnaps[currentYSnap]);
+    }
+
+    private void OnDisable()
+    {
+        ResetPlayer();
+    }
 }

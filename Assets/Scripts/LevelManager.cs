@@ -12,11 +12,24 @@ public class LevelManager : MonoBehaviour
     [HideInInspector] public int preMatchTimer;
 
 
-    [SerializeField] public PlayerBehaviour pB;
-    [SerializeField] private EnemySpawner eS;
+    [HideInInspector]  public PlayerBehaviour pB;
+    private EnemySpawner eS;
+    private IntroLevelManager iLM;
+
+    public float enemyMovSpeed;
+    public float enemySpawnInterval;
+
     void Start()
     {
+        pB = GameObject.Find("Player").GetComponent<PlayerBehaviour>();
+        eS = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
+        iLM = GameObject.Find("IntroLevelManager").GetComponent<IntroLevelManager>();
+
+        pB.enabled = false;
+        eS.enabled = false;
+        iLM.enabled = false;
         StartCoroutine(LevelStartCountdown());
+        pB.canShoot = true;
     }
 
     void Update()
@@ -28,8 +41,6 @@ public class LevelManager : MonoBehaviour
     {
         isCountingDown = true;
 
-        pB.enabled = false;
-        eS.enabled = false;
         preMatchTimer = levelStartTimerDuration;
 
         while (preMatchTimer > 0)

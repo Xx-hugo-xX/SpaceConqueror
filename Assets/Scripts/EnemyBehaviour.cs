@@ -27,7 +27,10 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void ShootLaser()
     {
-        GameObject newObstacle = Instantiate(laser, canon.position, Quaternion.identity);
+        if (spawner.canShoot)
+        {
+            GameObject newObstacle = Instantiate(laser, canon.position, Quaternion.identity);
+        }
     }
 
 
