@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject finalScorePanel;
     [SerializeField] public TextMeshProUGUI finalScoreDisplay;
+    [SerializeField] public TextMeshProUGUI finalLevelDisplay;
 
 
     Handedness pHandedness = Handedness.Right;
@@ -100,6 +101,8 @@ public class UIManager : MonoBehaviour
     {
         lM.DestroyAllShipsAndLasers(true);
         finalScoreDisplay.text = $"Pontuação Final: {lM.pB.GetScore()}";
+        if (lM.enabled && lM.hasLevelProgression) finalLevelDisplay.text = $"Nível Atingido: {lM.GetCurrentLevel()}";
+        else finalLevelDisplay.text = "";
         currentScorePanel.SetActive(false);
         finalScorePanel.SetActive(true);
         StartCoroutine(FinalScoreCountdown());
