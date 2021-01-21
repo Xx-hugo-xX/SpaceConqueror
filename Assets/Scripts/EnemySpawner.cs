@@ -28,8 +28,11 @@ public class EnemySpawner : MonoBehaviour
     private PlayerBehaviour pB;
     private IntroLevelManager iLM;
     [SerializeField] private LevelManager lM;
+    [SerializeField] private MainMenuManager mMM;
 
+    private float enemyMoveSpeed;
 
+    private int currentLevel = 1;
 
     void Start()
     {
@@ -49,6 +52,7 @@ public class EnemySpawner : MonoBehaviour
                 pB.AddScore(1);
             }
         }
+        if (lM.hasLevelProgression && lM.enabled && currentLevel != lM.GetCurrentLevel()) UpdateValues();
     }
 
     private void SpawnObject()
@@ -60,6 +64,14 @@ public class EnemySpawner : MonoBehaviour
         GameObject newObstacle = Instantiate(obstacle, enemyPos, Quaternion.identity, transform);
 
         enemyList.Add(newObstacle);
+
+        newObstacle.GetComponent<EnemyBehaviour>().enabled = true;
+
+        newObstacle.GetComponent<EnemyBehaviour>().lM = lM;
+
+
+
+        if (enemyMoveSpeed != 0) newObstacle.GetComponent<EnemyBehaviour>().movSpeed = enemyMoveSpeed;
     }
 
     public List<GameObject> GetEnemyList() => enemyList;
@@ -72,9 +84,20 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    private void UpdateValues()
+    {
+        print("CALLED");
+        CancelInvoke();
+        lM.DestroyAllShipsAndLasers(false);
+        enemyMoveSpeed = lM.enemyMovSpeed;
+        spawnInterval = lM.enemySpawnInterval;
+        currentLevel++;
+        InvokeRepeating("SpawnObject", 0, spawnInterval);
+    }
+
     private void OnEnable()
     {
-        CancelInvoke();
+        //CancelInvoke();
         enemyList = new List<GameObject>();
         iLM = GameObject.Find("IntroLevelManager").GetComponent<IntroLevelManager>();
 
@@ -82,13 +105,20 @@ public class EnemySpawner : MonoBehaviour
         {
             spawnInterval = iLM.enemySpawnInterval;
             canShoot = false;
+            enemyMoveSpeed = mMM.tSp;
         }
         else
         {
             spawnInterval = lM.enemySpawnInterval;
             canShoot = true;
+            enemyMoveSpeed = mMM.gSp;
         }
 
         InvokeRepeating("SpawnObject", 0, spawnInterval);
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke();
     }
 }

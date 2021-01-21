@@ -23,6 +23,10 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject currentScorePanel;
     [SerializeField] public TextMeshProUGUI currentScoreDisplay;
+
+    [SerializeField] private GameObject levelPanel;
+    [SerializeField] public TextMeshProUGUI levelDisplay;
+
     [SerializeField] public TextMeshProUGUI handednessDisplay;
     private int playerScore = 0;
 
@@ -46,6 +50,7 @@ public class UIManager : MonoBehaviour
 
         UpdateCurrentScore();
         UpdateHandDisplay();
+        if (lM.hasLevelProgression) UpdateLevelPanel();
 
         if (finalScorePanel.activeSelf && !isCountingDown && Input.anyKey)
             lM.RestartLevel();
@@ -87,14 +92,15 @@ public class UIManager : MonoBehaviour
         {
             playerScore = lM.pB.GetScore();
 
-            currentScoreDisplay.text = $"Score: {playerScore}";
+            currentScoreDisplay.text = $"Pontos: {playerScore}";
         }
     }
 
     public void ShowFinalScore()
     {
-        lM.DestroyAllShipsAndLasers();
-        finalScoreDisplay.text = $"Final Score: {lM.pB.GetScore()}";
+        lM.DestroyAllShipsAndLasers(true);
+        finalScoreDisplay.text = $"Pontuação Final: {lM.pB.GetScore()}";
+        currentScorePanel.SetActive(false);
         finalScorePanel.SetActive(true);
         StartCoroutine(FinalScoreCountdown());
     }
@@ -102,8 +108,8 @@ public class UIManager : MonoBehaviour
     public void UpdateHandDisplay()
     {
         string currentHandS;
-        if (pHandedness == Handedness.Right) currentHandS = "Right-Handed";
-        else currentHandS = "Left-Handed";
+        if (pHandedness == Handedness.Right) currentHandS = "Destro";
+        else currentHandS = "Esquerdino";
 
         if (currentHandS != handednessDisplay.text) handednessDisplay.text = currentHandS;
     }
@@ -128,6 +134,16 @@ public class UIManager : MonoBehaviour
     public void HideIntroMessagePanel()
     {
         introMessagePanel.SetActive(false);
+    }
+
+    public void ShowLevelPanel()
+    {
+        levelPanel.SetActive(true);
+    }
+
+    public void UpdateLevelPanel()
+    {
+        levelDisplay.text = $"Nível {lM.GetCurrentLevel()}";
     }
 
     #region OBSOLETE

@@ -15,6 +15,13 @@ public class LevelManager : MonoBehaviour
     [HideInInspector]  public PlayerBehaviour pB;
     private EnemySpawner eS;
     private IntroLevelManager iLM;
+    [SerializeField] private MainMenuManager mMM;
+    private UIManager uM;
+
+
+    [HideInInspector] public bool hasLevelProgression;
+
+    private int level = 1;
 
     public float enemyMovSpeed;
     public float enemySpawnInterval;
@@ -24,6 +31,8 @@ public class LevelManager : MonoBehaviour
         pB = GameObject.Find("Player").GetComponent<PlayerBehaviour>();
         eS = GameObject.Find("EnemySpawner").GetComponent<EnemySpawner>();
         iLM = GameObject.Find("IntroLevelManager").GetComponent<IntroLevelManager>();
+        uM = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (hasLevelProgression) uM.ShowLevelPanel();
 
         pB.enabled = false;
         eS.enabled = false;
@@ -34,7 +43,7 @@ public class LevelManager : MonoBehaviour
 
     void Update()
     {
-        
+        if (hasLevelProgression) ChangeLevel();
     }
 
     private IEnumerator LevelStartCountdown()
@@ -59,7 +68,7 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void DestroyAllShipsAndLasers()
+    public void DestroyAllShipsAndLasers(bool endGame)
     {
         LaserBehaviour[] lasers = (LaserBehaviour[])FindObjectsOfType(typeof(LaserBehaviour));
         PlayerBehaviour player = (PlayerBehaviour)FindObjectOfType(typeof(PlayerBehaviour));
@@ -75,7 +84,44 @@ public class LevelManager : MonoBehaviour
             Destroy(enemy);
         }
 
-        Destroy(player.gameObject);
-        Destroy(spawner.gameObject);
+        if (endGame)
+        {
+            Destroy(player.gameObject);
+            Destroy(spawner.gameObject);
+        }
     }
+
+
+
+
+    private void ChangeLevel()
+    {
+        if (pB.GetScore() >= GetRequiredPoints())
+        {
+            level++;
+            enemyMovSpeed *= mMM.levelMult;
+            enemySpawnInterval /= mMM.levelMult;
+        }
+    }
+
+    private int GetRequiredPoints()
+    {
+        int levelPoints = level * mMM.pointsPerLevel;
+        int previousPoints = 0;
+        for (int i = 1; i < level; i++)
+        {
+            previousPoints += i * mMM.pointsPerLevel;
+        }
+        return previousPoints + levelPoints;
+    }
+
+    private void OnEnable()
+    {
+        if (mMM.gSp != 0) enemyMovSpeed = mMM.gSp;
+        if (mMM.gSpI != 0) enemySpawnInterval = mMM.gSpI;
+
+        hasLevelProgression = mMM.useLevels;
+    }
+
+    public int GetCurrentLevel() => level;
 }

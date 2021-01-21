@@ -7,7 +7,7 @@ public class LaserBehaviour : MonoBehaviour
     [SerializeField] private float maxX;
     [SerializeField] private float minX;
 
-    [SerializeField] private float speed;
+    [SerializeField] public float speed;
     [SerializeField] public LaserUser lU;
 
     private PlayerBehaviour pB;

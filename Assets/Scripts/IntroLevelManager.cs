@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class IntroLevelManager : MonoBehaviour
 {
     [SerializeField] private LevelManager lM;
-    [SerializeField] private UIManager uM;
+    private UIManager uM;
 
     [SerializeField] private int levelStartTimerDuration;
 
@@ -16,6 +16,7 @@ public class IntroLevelManager : MonoBehaviour
 
     [HideInInspector] public PlayerBehaviour pB;
     private EnemySpawner eS;
+    [SerializeField] private MainMenuManager mMM;
 
     public float enemyMovSpeed;
     public float enemySpawnInterval;
@@ -33,14 +34,17 @@ public class IntroLevelManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (!isCountingDown)
         {
-            pB.AddScore(-pB.GetScore());
-            uM.HideIntroMessagePanel();
-            pB.enabled = false;
-            eS.enabled = false;
-            DestroyEnemyShipsAndLasers();
-            lM.gameObject.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.P) || (Input.GetKey(pB.upButton) && Input.GetKey(pB.downButton) && Input.GetKey(pB.shootButton)))
+            {
+                pB.AddScore(-pB.GetScore());
+                uM.HideIntroMessagePanel();
+                pB.enabled = false;
+                eS.enabled = false;
+                DestroyEnemyShipsAndLasers();
+                lM.gameObject.SetActive(true);
+            }
         }
     }
 
@@ -71,5 +75,11 @@ public class IntroLevelManager : MonoBehaviour
         }
 
         eS.DestroyAllShips();
-    } 
+    }
+
+    private void OnEnable()
+    {
+        if (mMM.tSp != 0) enemyMovSpeed = mMM.tSp;
+        if (mMM.tSpI != 0) enemySpawnInterval = mMM.tSpI;
+    }
 }

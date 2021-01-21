@@ -16,9 +16,9 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField] float[] ySnaps;
 
-    [SerializeField] private KeyCode upButton;
-    [SerializeField] private KeyCode downButton;
-    [SerializeField] private KeyCode shootButton;
+    [SerializeField] public KeyCode upButton;
+    [SerializeField] public KeyCode downButton;
+    [SerializeField] public KeyCode shootButton;
 
     int currentYSnap = 0;
 
@@ -36,6 +36,9 @@ public class PlayerBehaviour : MonoBehaviour
 
     private IntroLevelManager iLM;
     [SerializeField] private LevelManager lM;
+
+    [SerializeField] private AudioSource thrusters;
+    [SerializeField] private AudioSource laserShot;
 
     private void Start()
     {
@@ -83,6 +86,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (canShoot && Input.GetKeyDown(shootButton))
         {
             Instantiate(laser, canon.position, Quaternion.identity);
+            laserShot.PlayOneShot(laserShot.clip);
         }
     }
 
@@ -122,8 +126,14 @@ public class PlayerBehaviour : MonoBehaviour
         transform.position = new Vector2(transform.position.x, ySnaps[currentYSnap]);
     }
 
+    public void StartThrusters()
+    {
+        thrusters.Play();
+    }
+
     private void OnDisable()
     {
+        //thrusters.Stop();
         ResetPlayer();
     }
 }

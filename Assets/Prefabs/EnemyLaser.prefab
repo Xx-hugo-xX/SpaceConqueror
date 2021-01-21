@@ -98,7 +98,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxX: 12
   minX: -12
-  speed: 4.5
+  speed: 5
   lU: 1
 --- !u!61 &6904140137683383130
 BoxCollider2D:
